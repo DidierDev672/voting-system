@@ -1,6 +1,5 @@
-// import RegisterParty from "./party/infrastructure/driver/pages/register-party";
-import { DashboardLayout } from "./shared/components/layouts/DashboardLayout";
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  return <DashboardLayout children={undefined} />;
+  redirect('/dashboard');
 }

@@ -1,6 +1,8 @@
 import { Logo } from "../atoms/Logo";
+import Link from "next/link";
+import { ReactNode } from "react";
 
-export function Sidebar({ children }) {
+export function Sidebar({ children }: { children?: ReactNode }) {
   const navLinks = [
     { href: "/dashboard", label: "Panel Principal", icon: "📊" },
     { href: "/partidos", label: "Partidos Políticos", icon: "🏛️" },
@@ -18,7 +20,7 @@ export function Sidebar({ children }) {
         <ul className="space-y-1">
           {navLinks.map((link) => (
             <li key={link.href}>
-              <a
+              <Link
                 href={link.href}
                 className="flex items-center px-4 py-3 rounded-sm text-sm font-light tracking-wide text-[#8b7355] hover:bg-[#faf8f5] hover:text-[#3d2f1f] transition-all duration-300 group"
               >
@@ -26,7 +28,7 @@ export function Sidebar({ children }) {
                   {link.icon}
                 </span>
                 {link.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
