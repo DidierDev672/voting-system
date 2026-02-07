@@ -8,6 +8,7 @@ export function Sidebar({ children }: { children?: ReactNode }) {
     { href: '/partidos', label: 'Partidos Políticos', icon: '🏛️' },
     { href: '/Miembros', label: 'Miembros', icon: '👥' },
     { href: '/political_consultation', label: 'Consulta', icon: '🗳️' },
+    { href: '/vote-poll', label: 'Votar consulta', icon: '🗳️' },
     { href: '/resultados', label: 'Resultados', icon: '📈' },
     { href: '/configuracion', label: 'Configuración', icon: '⚙️' },
   ];
