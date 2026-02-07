@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Sistema de votacion",
-  description: "",
+  title: 'Sistema de votacion',
+  description: '',
 };
 
 export default function RootLayout({

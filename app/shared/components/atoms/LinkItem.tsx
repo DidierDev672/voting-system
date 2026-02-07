@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { ReactNode } from "react";
+import Link from 'next/link';
+import { ReactNode } from 'react';
 
 interface LinkItemProps {
   href: string;
@@ -13,8 +13,8 @@ export const LinkItem = ({
   isActive = false,
 }: LinkItemProps) => {
   const activeClasses = isActive
-    ? "bg-[#3d2f1f] text-white shadow-sm"
-    : "text-[#8b7355] hover:bg-[#faf8f5] hover:text-[#3d2f1f]";
+    ? 'bg-[#3d2f1f] text-white shadow-sm'
+    : 'text-[#8b7355] hover:bg-[#faf8f5] hover:text-[#3d2f1f]';
   return (
     <Link
       href={href}

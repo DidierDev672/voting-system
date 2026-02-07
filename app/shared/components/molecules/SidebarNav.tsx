@@ -1,4 +1,4 @@
-import { LinkItem } from "../atoms/LinkItem";
+import { LinkItem } from '../atoms/LinkItem';
 
 interface SidebarNavProps {
   links: { href: string; label: string; icon?: React.ReactNode }[];
