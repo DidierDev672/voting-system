@@ -1,15 +1,15 @@
-import { Logo } from "../atoms/Logo";
-import Link from "next/link";
-import { ReactNode } from "react";
+import { Logo } from '../atoms/Logo';
+import Link from 'next/link';
+import { ReactNode } from 'react';
 
 export function Sidebar({ children }: { children?: ReactNode }) {
   const navLinks = [
-    { href: "/dashboard", label: "Panel Principal", icon: "📊" },
-    { href: "/partidos", label: "Partidos Políticos", icon: "🏛️" },
-    { href: "/Miembros", label: "Miembros", icon: "👥" },
-    { href: "/consulta", label: "Votaciones", icon: "🗳️" },
-    { href: "/resultados", label: "Resultados", icon: "📈" },
-    { href: "/configuracion", label: "Configuración", icon: "⚙️" },
+    { href: '/dashboard', label: 'Panel Principal', icon: '📊' },
+    { href: '/partidos', label: 'Partidos Políticos', icon: '🏛️' },
+    { href: '/Miembros', label: 'Miembros', icon: '👥' },
+    { href: '/political_consultation', label: 'Consulta', icon: '🗳️' },
+    { href: '/resultados', label: 'Resultados', icon: '📈' },
+    { href: '/configuracion', label: 'Configuración', icon: '⚙️' },
   ];
   return (
     <aside className="w-64 bg-[#f5f1eb] border-r border-[#e5ddd0] flex flex-col min-h-screen">

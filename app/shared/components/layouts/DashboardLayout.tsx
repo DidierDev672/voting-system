@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
-import { Sidebar } from "../organisms/Sidebar";
-import { Footer } from "../organisms/Footer";
+import { ReactNode } from 'react';
+import { Sidebar } from '../organisms/Sidebar';
+import { Footer } from '../organisms/Footer';
 
 interface DashboardLayoutProps {
   children: ReactNode;

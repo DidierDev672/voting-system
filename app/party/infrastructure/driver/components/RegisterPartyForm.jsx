@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 
 export default function RegisterPartyForm() {
   const {
@@ -10,7 +10,7 @@ export default function RegisterPartyForm() {
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log("Datos del formulario:", data);
+    console.log('Datos del formulario:', data);
   };
 
   return (
@@ -36,8 +36,8 @@ export default function RegisterPartyForm() {
           </label>
           <input
             type="text"
-            {...register("partyName", {
-              required: "Este campo es obligatorio",
+            {...register('partyName', {
+              required: 'Este campo es obligatorio',
             })}
             className="w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3 text-[#3d2f1f] placeholder-[#b8a896] focus:outline-none focus:border-[#8b7355] focus:ring-1 focus:ring-[#8b7355] transition-all"
           />
@@ -65,8 +65,8 @@ export default function RegisterPartyForm() {
               type="file"
               accept=".pdf"
               className="w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3 text-[#3d2f1f] file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-light file:bg-[#8b7355] file:text-white hover:file:bg-[#6d5a43] file:cursor-pointer focus:outline-none focus:border-[#8b7355] transition-all"
-              {...register("foundingAct", {
-                required: "Debe subir el acta de fundación",
+              {...register('foundingAct', {
+                required: 'Debe subir el acta de fundación',
               })}
             />
             {errors.foundingAct && (
@@ -86,7 +86,7 @@ export default function RegisterPartyForm() {
             type="file"
             accept=".pdf"
             className="w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3 text-[#3d2f1f] file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-light file:bg-[#8b7355] file:text-white hover:file:bg-[#6d5a43] file:cursor-pointer focus:outline-none focus:border-[#8b7355] transition-all"
-            {...register("statutes", { required: "Debe subir los estatutos" })}
+            {...register('statutes', { required: 'Debe subir los estatutos' })}
           />
           {errors.statutes && (
             <p className="text-[#c17767] text-xs mt-2 font-light">
@@ -104,8 +104,8 @@ export default function RegisterPartyForm() {
             type="file"
             accept=".pdf"
             className="w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3 text-[#3d2f1f] file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-light file:bg-[#8b7355] file:text-white hover:file:bg-[#6d5a43] file:cursor-pointer focus:outline-none focus:border-[#8b7355] transition-all"
-            {...register("affiliatesList", {
-              required: "Debe subir la lista de afiliados",
+            {...register('affiliatesList', {
+              required: 'Debe subir la lista de afiliados',
             })}
           />
           {errors.affiliatesList && (
@@ -129,7 +129,7 @@ export default function RegisterPartyForm() {
               type="file"
               accept="image/*"
               className="w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3 text-[#3d2f1f] file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-light file:bg-[#8b7355] file:text-white hover:file:bg-[#6d5a43] file:cursor-pointer focus:outline-none focus:border-[#8b7355] transition-all"
-              {...register("logo", { required: "Debe subir un logo" })}
+              {...register('logo', { required: 'Debe subir un logo' })}
             />
             {errors.logo && (
               <p className="text-[#c17767] text-xs mt-2 font-light">
@@ -150,8 +150,8 @@ export default function RegisterPartyForm() {
             </label>
             <input
               type="text"
-              {...register("address", {
-                required: "La dirección es obligatoria",
+              {...register('address', {
+                required: 'La dirección es obligatoria',
               })}
               className="w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3 text-[#3d2f1f] placeholder-[#b8a896] focus:outline-none focus:border-[#8b7355] focus:ring-1 focus:ring-[#8b7355] transition-all"
             />
@@ -168,7 +168,7 @@ export default function RegisterPartyForm() {
           </label>
           <input
             type="email"
-            {...register("email", { required: "El correo es obligatorio" })}
+            {...register('email', { required: 'El correo es obligatorio' })}
             className="w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3 text-[#3d2f1f] placeholder-[#b8a896] focus:outline-none focus:border-[#8b7355] focus:ring-1 focus:ring-[#8b7355] transition-al"
           />
           {errors.email && (
