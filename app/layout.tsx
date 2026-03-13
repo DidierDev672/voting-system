@@ -1,9 +1,10 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import type { Metadata } from "next";
+// import { hydrateRoot } from "react-dom/client";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'Sistema de votacion',
-  description: '',
+  title: "Sistema de votación",
+  description: "",
 };
 
 export default function RootLayout({
