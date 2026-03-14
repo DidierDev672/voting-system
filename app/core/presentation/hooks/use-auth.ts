@@ -47,22 +47,25 @@ export function useAuth() {
   }, [mounted]);
 
   // Iniciar sesión
-  const login = useCallback(async (credentials: LoginDTO) => {
-    setLoading(true);
-    try {
-      const result = await loginUseCase.execute(credentials);
-      
-      localStorage.setItem('auth_session', JSON.stringify(result.session));
-      localStorage.setItem('auth_user', JSON.stringify(result.user));
-      
-      setUser(result.user);
-      setSession(result.session);
-      
-      router.push('/dashboard');
-    } finally {
-      setLoading(false);
-    }
-  }, [router]);
+  const login = useCallback(
+    async (credentials: LoginDTO) => {
+      setLoading(true);
+      try {
+        const result = await loginUseCase.execute(credentials);
+
+        localStorage.setItem('auth_session', JSON.stringify(result.session));
+        localStorage.setItem('auth_user', JSON.stringify(result.user));
+
+        setUser(result.user);
+        setSession(result.session);
+
+        router.push('/dashboard');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [router],
+  );
 
   // Cerrar sesión
   const logout = useCallback(async () => {

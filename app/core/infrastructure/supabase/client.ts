@@ -17,12 +17,12 @@ export const getSupabaseClient = (): SupabaseClient => {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error(
-      'Las variables de entorno NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY son requeridas'
+      'Las variables de entorno NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY son requeridas',
     );
   }
 
   supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
-  
+
   return supabaseClient;
 };
 

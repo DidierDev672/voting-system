@@ -12,6 +12,9 @@ export interface IVoteRepository {
   findById(id: string): Promise<Vote | null>;
   findByConsultation(idConsult: string): Promise<Vote[]>;
   findByMember(idMember: string): Promise<Vote[]>;
-  existsByMemberAndConsult(idMember: string, idConsult: string): Promise<boolean>;
+  existsByMemberAndConsult(
+    idMember: string,
+    idConsult: string,
+  ): Promise<boolean>;
   delete(id: string): Promise<boolean>;
 }

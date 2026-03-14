@@ -7,7 +7,12 @@
 
 import { useState, useEffect } from 'react';
 import { consultationsApi, votesApi } from '@/app/core/application/api-client';
-import { PopularConsultation, Vote, CreateConsultationDTO, CreateVoteDTO } from '@/app/core/domain/types';
+import {
+  PopularConsultation,
+  Vote,
+  CreateConsultationDTO,
+  CreateVoteDTO,
+} from '@/app/core/domain/types';
 
 // Hook para obtener todas las consultas
 export function useConsultations() {
@@ -16,7 +21,8 @@ export function useConsultations() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    consultationsApi.getAll()
+    consultationsApi
+      .getAll()
       .then(setConsultations)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -54,8 +60,9 @@ export function useVotesByConsultation(idConsult: string) {
 
   useEffect(() => {
     if (!idConsult) return;
-    
-    votesApi.getByConsultation(idConsult)
+
+    votesApi
+      .getByConsultation(idConsult)
       .then(setVotes)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));

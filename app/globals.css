@@ -14,9 +14,9 @@
   --sage: #8a9a8e;
   --amber: #d4a574;
 
-  --primary: var(--coffee-espresso);
+  --primary: #3d2f1f;
   --primary-hover: #2a1f13;
-  --secondary: var(--coffee-latte);
+  --secondary: #8b7355;
   --secondary-hover: #6d5a43;
 }
 
@@ -39,58 +39,111 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 400; /* Medium weight para headers */
+  font-weight: 400;
   letter-spacing: 0.02em;
-  color: var(--coffee-espresso);
+  color: #3d2f1f;
 }
 
 .btn-primary {
-  @apply bg-[#3d2f1f] text-white font-light tracking-wide py-3 px-6 rounded-sm;
-  @apply hover:bg-[#2a1f13] transition-all duration-300;
-  @apply shadow-sm hover:shadow-md;
+  background-color: #3d2f1f;
+  color: white;
+  font-weight: 300;
+  letter-spacing: 0.025em;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.125rem;
+  transition: all 0.3s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover {
+  background-color: #2a1f13;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary {
-  @apply bg-transparent border border-[#8b7355] text-[#8b7355] font-light tracking-wide py-3 px-6 rounded-sm;
-  @apply hover:bg-[#faf8f5] hover:border-[#6d5a43] hover:text-[#6d5a43];
-  @apply transition-all duration-300;
+  background-color: transparent;
+  border: 1px solid #8b7355;
+  color: #8b7355;
+  font-weight: 300;
+  letter-spacing: 0.025em;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.125rem;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: #faf8f5;
+  border-color: #6b5744;
+  color: #6b5744;
 }
 
 .input-base {
-  @apply w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3;
-  @apply text-[#3d2f1f] placeholder-[#b8a896];
-  @apply focus:outline-none focus:border-[#8b7355] focus:ring-1 focus:ring-[#8b7355];
-  @apply transition-all;
+  width: 100%;
+  background-color: #faf8f5;
+  border: 1px solid #e5ddd0;
+  border-radius: 0.125rem;
+  padding: 0.75rem 1rem;
+  color: #3d2f1f;
+  transition: all 0.2s;
+}
+
+.input-base::placeholder {
+  color: #b8a896;
+}
+
+.input-base:focus {
+  outline: none;
+  border-color: #8b7355;
+  box-shadow: 0 0 0 1px #8b7355;
 }
 
 .card {
-  @apply bg-white rounded-sm shadow-sm p-6 border border-[#e5ddd0];
-  @apply hover:shadow-md transition-shadow duration-300;
+  background-color: white;
+  border-radius: 0.125rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  border: 1px solid #e5ddd0;
+  transition: box-shadow 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .section-divider {
-  @apply pb-3 mb-6 border-b border-[#e5ddd0];
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e5ddd0;
 }
 
 .nav-link {
-  @apply flex items-center px-4 py-3 rounded-sm text-sm font-light tracking-wide;
-  @apply transition-all duration-300;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 0.125rem;
+  font-size: 0.875rem;
+  font-weight: 300;
+  letter-spacing: 0.025em;
+  transition: all 0.3s;
 }
 
 .nav-link-active {
-  @apply bg-[#3d2f1f] text-white shadow-sm;
+  background-color: #3d2f1f;
+  color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .nav-link-inactive {
-  @apply text-[#8b7355] hover:bg-[#faf8f5] hover:text-[#3d2f1f];
+  color: #8b7355;
+}
+
+.nav-link-inactive:hover {
+  background-color: #faf8f5;
+  color: #3d2f1f;
 }
 
 .text-gradient {
-  background: linear-gradient(
-    135deg,
-    var(--coffee-espresso),
-    var(--coffee-latte)
-  );
+  background: linear-gradient(135deg, #3d2f1f, #8b7355);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -123,19 +176,37 @@ h6 {
 }
 
 .container-cafe {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-cafe {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-cafe {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
 
 .section-spacing {
-  @apply mb-10;
+  margin-bottom: 2.5rem;
 }
 
 *:focus-visible {
-  outline: 2px solid var(--coffee-latte);
+  outline: 2px solid #8b7355;
   outline-offset: 2px;
 }
 
 .high-contrast {
-  color: var(--coffee-espresso);
+  color: #3d2f1f;
   font-weight: 400;
 }

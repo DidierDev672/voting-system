@@ -22,13 +22,16 @@ export default function ConsultationList() {
   return (
     <div className="consultation-list">
       <h1>Consultas Populares</h1>
-      
+
       {consultations.length === 0 ? (
         <p>No hay consultas disponibles</p>
       ) : (
         <ul>
           {consultations.map((consultation) => (
-            <ConsultationCard key={consultation.id} consultation={consultation} />
+            <ConsultationCard
+              key={consultation.id}
+              consultation={consultation}
+            />
           ))}
         </ul>
       )}
@@ -36,7 +39,11 @@ export default function ConsultationList() {
   );
 }
 
-function ConsultationCard({ consultation }: { consultation: PopularConsultation }) {
+function ConsultationCard({
+  consultation,
+}: {
+  consultation: PopularConsultation;
+}) {
   const statusColors = {
     draft: 'gray',
     published: 'green',

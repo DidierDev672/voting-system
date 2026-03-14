@@ -13,10 +13,10 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!mounted) return;
-    
+
     // Verificar si existe sesión en localStorage
     const session = localStorage.getItem('auth_session');
-    
+
     if (session) {
       router.push('/dashboard');
     } else {

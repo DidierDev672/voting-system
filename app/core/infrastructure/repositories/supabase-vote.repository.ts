@@ -78,7 +78,10 @@ export class SupabaseVoteRepository implements IVoteRepository {
     return (data || []).map(this.mapToEntity);
   }
 
-  async existsByMemberAndConsult(idMember: string, idConsult: string): Promise<boolean> {
+  async existsByMemberAndConsult(
+    idMember: string,
+    idConsult: string,
+  ): Promise<boolean> {
     const { data, error } = await supabase
       .from(this.table)
       .select('id')
@@ -90,10 +93,7 @@ export class SupabaseVoteRepository implements IVoteRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from(this.table)
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from(this.table).delete().eq('id', id);
 
     return !error;
   }

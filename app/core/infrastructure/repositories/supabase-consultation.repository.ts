@@ -8,7 +8,12 @@
 
 import { supabase } from '../../infrastructure/supabase/client';
 import { IConsultationRepository } from '../../domain/ports/consultation-repository.port';
-import { PopularConsultation, CreateConsultationDTO, UpdateConsultationDTO, Question } from '../../domain/types';
+import {
+  PopularConsultation,
+  CreateConsultationDTO,
+  UpdateConsultationDTO,
+  Question,
+} from '../../domain/types';
 
 export class SupabaseConsultationRepository implements IConsultationRepository {
   private readonly table = 'popular_consultations';
@@ -75,12 +80,16 @@ export class SupabaseConsultationRepository implements IConsultationRepository {
     return (data || []).map(this.mapToEntity);
   }
 
-  async update(id: string, data: UpdateConsultationDTO): Promise<PopularConsultation> {
+  async update(
+    id: string,
+    data: UpdateConsultationDTO,
+  ): Promise<PopularConsultation> {
     const updateData: any = {};
     if (data.title) updateData.title = data.title;
     if (data.description) updateData.description = data.description;
     if (data.questions) updateData.questions = data.questions;
-    if (data.proprietaryRepresentation) updateData.proprietary_representation = data.proprietaryRepresentation;
+    if (data.proprietaryRepresentation)
+      updateData.proprietary_representation = data.proprietaryRepresentation;
     if (data.status) updateData.status = data.status;
 
     const { data: result, error } = await supabase
@@ -95,10 +104,7 @@ export class SupabaseConsultationRepository implements IConsultationRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from(this.table)
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from(this.table).delete().eq('id', id);
 
     return !error;
   }

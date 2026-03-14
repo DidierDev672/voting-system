@@ -44,11 +44,11 @@ export default function Dashboard() {
             Cerrar Sesión
           </button>
         </div>
-        
+
         <p className="text-[#8b7355] mb-4">
           Bienvenido{user?.fullName ? `, ${user.fullName}` : ''}
         </p>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-sm border border-[#e5ddd0]">
             <h3 className="text-lg font-medium text-[#3d2f1f] mb-2">

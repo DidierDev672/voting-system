@@ -1,110 +1,180 @@
 /**
- * Caso de Uso: Obtener Todas las Consultas
+ * Casos de Uso de Consulta Popular
  * Principios SOLID:
- * - Single Responsibility: una sola razón para cambiar (lógica de obtener consultas)
- * - Dependency Inversion: depende de la abstracción IConsultationRepository
+ * - Single Responsibility: lógica de negocio de consulta popular
+ * - Dependency Inversion: depende de IConsultationRepository
  */
 
 import { IConsultationRepository } from '../../domain/ports/consultation-repository.port';
-import { PopularConsultation } from '../../domain/types';
-
-export class GetAllConsultationsUseCase {
-  constructor(private readonly repository: IConsultationRepository) {}
-
-  async execute(): Promise<PopularConsultation[]> {
-    return this.repository.findAll();
-  }
-}
-
-/**
- * Caso de Uso: Obtener Consulta por ID
- */
-
-export class GetConsultationByIdUseCase {
-  constructor(private readonly repository: IConsultationRepository) {}
-
-  async execute(id: string): Promise<PopularConsultation | null> {
-    if (!id) {
-      throw new Error('El ID de la consulta es requerido');
-    }
-    return this.repository.findById(id);
-  }
-}
-
-/**
- * Caso de Uso: Crear Consulta
- */
+import { Consultation, CreateConsultationDTO, Question, QuestionType } from '../../domain/types/consultation';
+import { logger } from '../../infrastructure/logger/logger';
 
 export class CreateConsultationUseCase {
-  constructor(private readonly repository: IConsultationRepository) {}
+  constructor(private readonly consultationRepository: IConsultationRepository) {}
 
-  async execute(data: {
-    title: string;
-    description: string;
-    questions: any[];
-    proprietaryRepresentation: string;
-  }): Promise<PopularConsultation> {
-    // Validaciones de negocio
-    if (!data.title || data.title.trim().length < 5) {
-      throw new Error('El título debe tener al menos 5 caracteres');
+  async execute(consultation: CreateConsultationDTO): Promise<Consultation> {
+    logger.info('USECASE: Iniciando CreateConsultationUseCase', { title: consultation.title });
+
+    if (!consultation.title || consultation.title.trim().length === 0) {
+      logger.warning('USECASE: Título de consulta inválido');
+      throw new Error('El título de la consulta es requerido');
     }
 
-    if (!data.description || data.description.trim().length < 10) {
-      throw new Error('La descripción debe tener al menos 10 caracteres');
+    if (!consultation.description || consultation.description.trim().length === 0) {
+      logger.warning('USECASE: Descripción de consulta inválida');
+      throw new Error('La descripción de la consulta es requerida');
     }
 
-    if (!data.questions || data.questions.length === 0) {
+    if (!consultation.questions || consultation.questions.length === 0) {
+      logger.warning('USECASE: Sin preguntas en la consulta');
       throw new Error('La consulta debe tener al menos una pregunta');
     }
 
-    if (!data.proprietaryRepresentation) {
+    for (const question of consultation.questions) {
+      this.validateQuestion(question);
+    }
+
+    if (!consultation.proprietaryRepresentation || consultation.proprietaryRepresentation.trim().length === 0) {
+      logger.warning('USECASE: Representación propietaria no proporcionada');
       throw new Error('La representación propietaria es requerida');
     }
 
-    return this.repository.create(data);
+    try {
+      const result = await this.consultationRepository.create(consultation);
+      logger.success('USECASE: CreateConsultationUseCase completado', { id: result.id });
+      return result;
+    } catch (error) {
+      logger.error('USECASE: Error en CreateConsultationUseCase', {
+        error: error instanceof Error ? error.message : error,
+      });
+      throw error;
+    }
+  }
+
+  private validateQuestion(question: Question): void {
+    if (!question.text || question.text.trim().length < 3) {
+      throw new Error('El texto de la pregunta debe tener al menos 3 caracteres');
+    }
+
+    const selectionTypes: QuestionType[] = ['multiple_choice', 'single_choice'];
+    if (selectionTypes.includes(question.questionType)) {
+      if (!question.options || question.options.length < 2) {
+        throw new Error(`La pregunta "${question.text}" debe tener al menos 2 opciones`);
+      }
+    }
   }
 }
 
-/**
- * Caso de Uso: Publicar Consulta
- */
+export class GetAllConsultationsUseCase {
+  constructor(private readonly consultationRepository: IConsultationRepository) {}
+
+  async execute(): Promise<Consultation[]> {
+    logger.info('USECASE: Iniciando GetAllConsultationsUseCase');
+
+    try {
+      const result = await this.consultationRepository.getAll();
+      logger.success('USECASE: GetAllConsultationsUseCase completado', { count: result.length });
+      return result;
+    } catch (error) {
+      logger.error('USECASE: Error en GetAllConsultationsUseCase', {
+        error: error instanceof Error ? error.message : error,
+      });
+      throw error;
+    }
+  }
+}
+
+export class GetConsultationByIdUseCase {
+  constructor(private readonly consultationRepository: IConsultationRepository) {}
+
+  async execute(id: string): Promise<Consultation | null> {
+    logger.info('USECASE: Iniciando GetConsultationByIdUseCase', { id });
+
+    if (!id) {
+      logger.warning('USECASE: ID de consulta no proporcionado');
+      throw new Error('El ID de la consulta es requerido');
+    }
+
+    try {
+      const result = await this.consultationRepository.getById(id);
+      logger.success('USECASE: GetConsultationByIdUseCase completado', { id, found: !!result });
+      return result;
+    } catch (error) {
+      logger.error('USECASE: Error en GetConsultationByIdUseCase', {
+        error: error instanceof Error ? error.message : error,
+      });
+      throw error;
+    }
+  }
+}
 
 export class PublishConsultationUseCase {
-  constructor(private readonly repository: IConsultationRepository) {}
+  constructor(private readonly consultationRepository: IConsultationRepository) {}
 
-  async execute(id: string): Promise<PopularConsultation> {
-    const consultation = await this.repository.findById(id);
+  async execute(id: string): Promise<Consultation> {
+    logger.info('USECASE: Iniciando PublishConsultationUseCase', { id });
 
-    if (!consultation) {
-      throw new Error('Consulta no encontrada');
+    if (!id) {
+      logger.warning('USECASE: ID de consulta no proporcionado');
+      throw new Error('El ID de la consulta es requerido');
     }
 
-    if (consultation.status !== 'draft') {
-      throw new Error('Solo las consultas en borrador pueden ser publicadas');
+    try {
+      const result = await this.consultationRepository.publish(id);
+      logger.success('USECASE: PublishConsultationUseCase completado', { id });
+      return result;
+    } catch (error) {
+      logger.error('USECASE: Error en PublishConsultationUseCase', {
+        error: error instanceof Error ? error.message : error,
+      });
+      throw error;
     }
-
-    return this.repository.update(id, { status: 'published' });
   }
 }
 
-/**
- * Caso de Uso: Cerrar Consulta
- */
-
 export class CloseConsultationUseCase {
-  constructor(private readonly repository: IConsultationRepository) {}
+  constructor(private readonly consultationRepository: IConsultationRepository) {}
 
-  async execute(id: string): Promise<PopularConsultation> {
-    const consultation = await this.repository.findById(id);
+  async execute(id: string): Promise<Consultation> {
+    logger.info('USECASE: Iniciando CloseConsultationUseCase', { id });
 
-    if (!consultation) {
-      throw new Error('Consulta no encontrada');
+    if (!id) {
+      logger.warning('USECASE: ID de consulta no proporcionado');
+      throw new Error('El ID de la consulta es requerido');
     }
 
-    if (consultation.status !== 'published') {
-      throw new Error('Solo las consultas publicadas pueden ser cerradas');
+    try {
+      const result = await this.consultationRepository.close(id);
+      logger.success('USECASE: CloseConsultationUseCase completado', { id });
+      return result;
+    } catch (error) {
+      logger.error('USECASE: Error en CloseConsultationUseCase', {
+        error: error instanceof Error ? error.message : error,
+      });
+      throw error;
+    }
+  }
+}
+
+export class DeleteConsultationUseCase {
+  constructor(private readonly consultationRepository: IConsultationRepository) {}
+
+  async execute(id: string): Promise<void> {
+    logger.info('USECASE: Iniciando DeleteConsultationUseCase', { id });
+
+    if (!id) {
+      logger.warning('USECASE: ID de consulta no proporcionado');
+      throw new Error('El ID de la consulta es requerido');
     }
 
-    return this.repository.update(id, { status: 'closed' });
+    try {
+      await this.consultationRepository.delete(id);
+      logger.success('USECASE: DeleteConsultationUseCase completado', { id });
+    } catch (error) {
+      logger.error('USECASE: Error en DeleteConsultationUseCase', {
+        error: error instanceof Error ? error.message : error,
+      });
+      throw error;
+    }
   }
 }

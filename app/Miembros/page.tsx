@@ -1,10 +1,10 @@
 import { DashboardLayout } from '@/app/shared/components/layouts/DashboardLayout';
-import RegisterMember from '@/app/member/presentation/pages/index';
+import RegisterMemberForm from '@/app/member/infrastructure/driver/components/RegisterMemberForm';
 
 export default function Miembros() {
   return (
     <DashboardLayout>
-      <RegisterMember />
+      <RegisterMemberForm />
     </DashboardLayout>
   );
 }

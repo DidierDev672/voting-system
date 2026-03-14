@@ -1,26 +1,27 @@
 import { Logo } from '../atoms/Logo';
-import Link from 'next/link';
-import { ReactNode } from 'react';
 
-export function Sidebar({ children }: { children?: ReactNode }) {
+export function Sidebar() {
   const navLinks = [
     { href: '/dashboard', label: 'Panel Principal', icon: '📊' },
-    { href: '/partidos', label: 'Partidos Políticos', icon: '🏛️' },
-    { href: '/Miembros', label: 'Miembros', icon: '👥' },
-    { href: '/political_consultation', label: 'Consulta', icon: '🗳️' },
+    { href: '/partidos', label: 'Registrar Partido', icon: '🏛️' },
+    { href: '/partidos/list', label: 'Lista Partidos', icon: '📋' },
+    { href: '/Miembros', label: 'Registrar Miembro', icon: '👤' },
+    { href: '/Miembros/list', label: 'Lista Miembros', icon: '👥' },
+    { href: '/political_consultation', label: 'Crear Consulta', icon: '📝' },
+    { href: '/consultation/list', label: 'Lista Consultas', icon: '🗳️' },
     { href: '/resultados', label: 'Resultados', icon: '📈' },
     { href: '/configuracion', label: 'Configuración', icon: '⚙️' },
   ];
+
   return (
     <aside className="w-64 bg-[#f5f1eb] border-r border-[#e5ddd0] flex flex-col min-h-screen">
       <Logo />
-      {children}
       {/* Navigation */}
       <nav className="mt-8 px-4 flex-1">
         <ul className="space-y-1">
           {navLinks.map((link) => (
             <li key={link.href}>
-              <Link
+              <a
                 href={link.href}
                 className="flex items-center px-4 py-3 rounded-sm text-sm font-light tracking-wide text-[#8b7355] hover:bg-[#faf8f5] hover:text-[#3d2f1f] transition-all duration-300 group"
               >
@@ -28,7 +29,7 @@ export function Sidebar({ children }: { children?: ReactNode }) {
                   {link.icon}
                 </span>
                 {link.label}
-              </Link>
+              </a>
             </li>
           ))}
         </ul>
@@ -43,7 +44,6 @@ export function Sidebar({ children }: { children?: ReactNode }) {
           Democracia Participativa
         </p>
       </div>
-      {children}
     </aside>
   );
 }

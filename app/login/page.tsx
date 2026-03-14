@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect, FormEvent } from "react";
-import { useRouter } from "next/navigation";
-import { SupabaseAuthAdapter } from "@/app/core/infrastructure/adapters/supabase-auth.adapter";
-import { LoginUseCase } from "@/app/core/application/usecases/auth.usecases";
+import { useState, useEffect, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { SupabaseAuthAdapter } from '@/app/core/infrastructure/adapters/supabase-auth.adapter';
+import { LoginUseCase } from '@/app/core/application/usecases/auth.usecases';
+import { logger } from '@/app/core/infrastructure/logger/logger';
 
 const authAdapter = new SupabaseAuthAdapter();
 const loginUseCase = new LoginUseCase(authAdapter);
@@ -11,35 +12,42 @@ const loginUseCase = new LoginUseCase(authAdapter);
 export default function LoginPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Verificar si ya está autenticado
   useEffect(() => {
     setMounted(true);
 
-    const session = localStorage.getItem("auth_session");
+    const session = localStorage.getItem('auth_session');
     if (session) {
-      router.push("/dashboard");
+      router.push('/dashboard');
     }
   }, [router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
+
+    logger.info('PAGE: Iniciando proceso de login desde UI', { email });
 
     try {
       const result = await loginUseCase.execute({ email, password });
 
-      localStorage.setItem("auth_session", JSON.stringify(result.session));
-      localStorage.setItem("auth_user", JSON.stringify(result.user));
+      logger.success('PAGE: Login exitoso, guardando sesión en localStorage', { userId: result.user.id });
+      
+      localStorage.setItem('auth_session', JSON.stringify(result.session));
+      localStorage.setItem('auth_user', JSON.stringify(result.user));
 
-      router.push("/dashboard");
+      logger.info('PAGE: Redireccionando a dashboard');
+      router.push('/dashboard');
     } catch (err) {
-      setError((err as Error).message || "Error al iniciar sesión");
+      const errorMessage = (err as Error).message || 'Error al iniciar sesión';
+      logger.error('PAGE: Error en login', { error: errorMessage });
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

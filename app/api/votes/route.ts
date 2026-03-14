@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     } else {
       return NextResponse.json(
         { success: false, error: 'Se requiere idConsult o idMember' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -57,17 +57,11 @@ export async function POST(request: NextRequest) {
     const useCase = new RegisterVoteUseCase(repository);
     const vote = await useCase.execute(body);
 
-    return NextResponse.json(
-      { success: true, data: vote },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, data: vote }, { status: 201 });
   } catch (error) {
     const message = (error as Error).message;
     const status = message.includes('ya ha') ? 409 : 400;
 
-    return NextResponse.json(
-      { success: false, error: message },
-      { status }
-    );
+    return NextResponse.json({ success: false, error: message }, { status });
   }
 }

@@ -16,7 +16,7 @@ const repository = new SupabaseConsultationRepository();
 // GET /api/consultations/[id] - Obtener consulta por ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -26,7 +26,7 @@ export async function GET(
     if (!consultation) {
       return NextResponse.json(
         { success: false, error: 'Consulta no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -37,7 +37,7 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       { success: false, error: (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -45,7 +45,7 @@ export async function GET(
 // PUT /api/consultations/[id] - Publicar o cerrar consulta
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -61,7 +61,7 @@ export async function PUT(
     } else {
       return NextResponse.json(
         { success: false, error: 'Acción no válida' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -75,17 +75,14 @@ export async function PUT(
     const message = (error as Error).message;
     const status = message.includes('no encontrada') ? 404 : 400;
 
-    return NextResponse.json(
-      { success: false, error: message },
-      { status }
-    );
+    return NextResponse.json({ success: false, error: message }, { status });
   }
 }
 
 // DELETE /api/consultations/[id] - Eliminar consulta
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -98,7 +95,7 @@ export async function DELETE(
   } catch (error) {
     return NextResponse.json(
       { success: false, error: (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

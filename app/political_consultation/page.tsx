@@ -1,10 +1,10 @@
-import { DashboardLayout } from '../shared/components/layouts/DashboardLayout';
-import PoliticalConsultationForm from './page/PoliticalConsultationForm';
+import { DashboardLayout } from '@/app/shared/components/layouts/DashboardLayout';
+import RegisterConsultationForm from '@/app/consultation/infrastructure/driver/components/RegisterConsultationForm';
 
 export default function PoliticalConsultation() {
   return (
     <DashboardLayout>
-      <PoliticalConsultationForm />
+      <RegisterConsultationForm />
     </DashboardLayout>
   );
 }

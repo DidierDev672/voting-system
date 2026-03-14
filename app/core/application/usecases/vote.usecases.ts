@@ -32,7 +32,7 @@ export class RegisterVoteUseCase {
     // Verificar que el miembro no haya votado previamente
     const hasVoted = await this.repository.existsByMemberAndConsult(
       data.idMember,
-      data.idConsult
+      data.idConsult,
     );
 
     if (hasVoted) {
