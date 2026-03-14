@@ -9,6 +9,7 @@ export function Sidebar() {
     { href: '/Miembros/list', label: 'Lista Miembros', icon: '👥' },
     { href: '/political_consultation', label: 'Crear Consulta', icon: '📝' },
     { href: '/consultation/list', label: 'Lista Consultas', icon: '🗳️' },
+    { href: '/votos/list', label: 'Votos', icon: '🗳️' },
     { href: '/resultados', label: 'Resultados', icon: '📈' },
     { href: '/configuracion', label: 'Configuración', icon: '⚙️' },
   ];

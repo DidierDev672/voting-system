@@ -164,6 +164,36 @@ export class DjangoPartyMemberRepository implements IPartyMemberRepository {
     }
   }
 
+  async getByDocumentNumber(documentNumber: string): Promise<PartyMember | null> {
+    logger.info('DJANGO_MEMBER_REPO: Buscando miembro por documento', { documentNumber });
+
+    try {
+      const response = await djangoApi.get<ListMembersApiResponse>(
+        `${this.endpoint}/?document_number=${documentNumber}`
+      );
+
+      if (!response.data.data || response.data.data.length === 0) {
+        logger.warning('DJANGO_MEMBER_REPO: Miembro no encontrado', { documentNumber });
+        return null;
+      }
+
+      logger.success('DJANGO_MEMBER_REPO: Miembro encontrado', { 
+        documentNumber, 
+        memberId: response.data.data[0].id 
+      });
+
+      return this.mapToEntity(response.data.data[0]);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || error.message;
+        logger.error('DJANGO_MEMBER_REPO: Error de Axios', { message });
+        throw new Error(message);
+      }
+      logger.error('DJANGO_MEMBER_REPO: Error desconocido', { error });
+      throw error;
+    }
+  }
+
   async delete(id: string): Promise<void> {
     logger.info('DJANGO_MEMBER_REPO: Eliminando miembro', { id });
 

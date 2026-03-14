@@ -12,5 +12,6 @@ export interface IPartyMemberRepository {
   getAll(): Promise<PartyMember[]>;
   getById(id: string): Promise<PartyMember | null>;
   getByPartyId(partyId: string): Promise<PartyMember[]>;
+  getByDocumentNumber(documentNumber: string): Promise<PartyMember | null>;
   delete(id: string): Promise<void>;
 }

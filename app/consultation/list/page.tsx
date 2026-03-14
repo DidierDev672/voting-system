@@ -12,6 +12,7 @@ import {
   ConsultationStatus,
 } from "@/app/core/domain/types/consultation";
 import { logger } from "@/app/core/infrastructure/logger/logger";
+import { VoteFormModal } from "../components/VoteFormModal";
 
 const consultationRepository = new DjangoConsultationRepository();
 const getAllConsultationsUseCase = new GetAllConsultationsUseCase(
@@ -32,6 +33,7 @@ function ConsultationListContent() {
     selectedConsultation,
     setSelectedConsultation,
   ] = useState<Consultation | null>(null);
+  const [votingConsultation, setVotingConsultation] = useState<Consultation | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -333,6 +335,27 @@ function ConsultationListContent() {
                               />
                             </svg>
                           </button>
+                          {consultation.status === 'published' && (
+                            <button
+                              onClick={() => setVotingConsultation(consultation)}
+                              className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors"
+                              title="Votar"
+                            >
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                            </button>
+                          )}
                           <button
                             onClick={() => handleDelete(consultation.id)}
                             disabled={deletingId === consultation.id}
@@ -492,6 +515,14 @@ function ConsultationListContent() {
             </div>
           </div>
         </div>
+      )}
+
+      {votingConsultation && (
+        <VoteFormModal
+          consultation={votingConsultation}
+          onClose={() => setVotingConsultation(null)}
+          onVoteSuccess={loadConsultations}
+        />
       )}
     </div>
   );

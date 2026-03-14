@@ -102,6 +102,11 @@ export class DjangoPartyRepository implements IPartyRepository {
     try {
       const response = await djangoApi.get<ListPartiesApiResponse>(this.endpoint);
 
+      logger.info('DJANGO_PARTY_REPO: Respuesta cruda', { 
+        data: response.data,
+        rawData: JSON.stringify(response.data) 
+      });
+
       if (!response.data.data) {
         logger.warning('DJANGO_PARTY_REPO: No se recibieron datos');
         return [];
@@ -109,6 +114,7 @@ export class DjangoPartyRepository implements IPartyRepository {
 
       logger.success('DJANGO_PARTY_REPO: Partidos obtenidos', {
         count: response.data.data.length,
+        firstParty: response.data.data[0],
       });
 
       return response.data.data.map(this.mapToEntity);
