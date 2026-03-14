@@ -46,4 +46,5 @@ export interface VoteDetail {
   valueVote: boolean;
   comment?: string;
   createdAt: string;
+  result?: 'winner' | 'loser' | 'tie';
 }

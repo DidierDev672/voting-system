@@ -174,23 +174,21 @@ export class GetVoteDetailsUseCase {
       const votes = await this.voteRepository.getByConsultation(consultationId);
       const consultation = await this.consultationRepository.getById(consultationId);
       const parties = await this.partyRepository.getAll();
+      const allMembers = await this.memberRepository.getAll();
+
+      console.log('=== VOTE DETAILS DEBUG ===');
+      console.log('Votes:', JSON.stringify(votes, null, 2));
+      console.log('Parties:', JSON.stringify(parties, null, 2));
+      console.log('All Members:', JSON.stringify(allMembers.slice(0, 3), null, 2));
 
       const partyMap = new Map<string, PoliticalParty>();
       parties.forEach(p => partyMap.set(p.id, p));
 
-      const memberIds = [...new Set(votes.map(v => v.memberId))];
       const memberMap = new Map<string, PartyMember>();
+      allMembers.forEach(m => memberMap.set(m.id, m));
 
-      for (const memberId of memberIds) {
-        try {
-          const member = await this.memberRepository.getById(memberId);
-          if (member) {
-            memberMap.set(memberId, member);
-          }
-        } catch {
-          // Member not found, continue
-        }
-      }
+      console.log('Party map keys:', Array.from(partyMap.keys()));
+      console.log('Member map keys:', Array.from(memberMap.keys()).slice(0, 5));
 
       const summary: VoteSummary = {
         consultationId,
@@ -200,18 +198,36 @@ export class GetVoteDetailsUseCase {
         votesAgainst: votes.filter(v => !v.valueVote).length,
       };
 
+      const votesInFavor = summary.votesInFavor;
+      const votesAgainst = summary.votesAgainst;
+      let result: 'winner' | 'loser' | 'tie';
+      
+      if (votesInFavor > votesAgainst) {
+        result = 'winner';
+      } else if (votesAgainst > votesInFavor) {
+        result = 'loser';
+      } else {
+        result = 'tie';
+      }
+
       const details: VoteDetail[] = votes.map(vote => {
         const member = memberMap.get(vote.memberId);
         const party = member ? partyMap.get(member.politicalPartyId) : undefined;
 
+        console.log('Processing vote:', vote.id, 'memberId:', vote.memberId, 'found:', !!member, 'partyId:', member?.politicalPartyId);
+
+        const memberIdStr = vote.memberId || '';
+        const partyIdStr = member?.politicalPartyId || '';
+
         return {
           id: vote.id,
-          memberName: member?.fullName || 'Desconocido',
-          partyName: party?.name || 'Desconocido',
+          memberName: member?.fullName || (memberIdStr ? `Miembro (${memberIdStr.substring(0, 8)})` : 'Sin ID'),
+          partyName: party?.name || (partyIdStr ? `Partido (${partyIdStr.substring(0, 8)})` : 'Sin partido'),
           partyAcronym: party?.acronym || '',
           valueVote: vote.valueVote,
           comment: vote.comment,
           createdAt: vote.createdAt,
+          result: result,
         };
       });
 

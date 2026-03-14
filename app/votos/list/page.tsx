@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { DashboardLayout } from '@/app/shared/components/layouts/DashboardLayout';
-import { DjangoVoteRepository } from '@/app/core/infrastructure/adapters/django-vote.repository';
-import { DjangoConsultationRepository } from '@/app/core/infrastructure/adapters/django-consultation.repository';
-import { DjangoPartyRepository } from '@/app/core/infrastructure/adapters/django-party.repository';
-import { DjangoPartyMemberRepository } from '@/app/core/infrastructure/adapters/django-party-member.repository';
+import { useState, useEffect } from "react";
+import { DashboardLayout } from "@/app/shared/components/layouts/DashboardLayout";
+import { DjangoVoteRepository } from "@/app/core/infrastructure/adapters/django-vote.repository";
+import { DjangoConsultationRepository } from "@/app/core/infrastructure/adapters/django-consultation.repository";
+import { DjangoPartyRepository } from "@/app/core/infrastructure/adapters/django-party.repository";
+import { DjangoPartyMemberRepository } from "@/app/core/infrastructure/adapters/django-party-member.repository";
 import {
   GetAllVotesUseCase,
   GetVoteDetailsUseCase,
-} from '@/app/core/application/usecases/vote.usecases';
-import { VoteSummary, VoteDetail } from '@/app/core/domain/types/vote';
-import { logger } from '@/app/core/infrastructure/logger/logger';
+} from "@/app/core/application/usecases/vote.usecases";
+import { VoteSummary, VoteDetail } from "@/app/core/domain/types/vote";
+import { logger } from "@/app/core/infrastructure/logger/logger";
 
 const voteRepository = new DjangoVoteRepository();
 const consultationRepository = new DjangoConsultationRepository();
@@ -20,22 +20,25 @@ const memberRepository = new DjangoPartyMemberRepository();
 
 const getAllVotesUseCase = new GetAllVotesUseCase(
   voteRepository,
-  consultationRepository
+  consultationRepository,
 );
 const getVoteDetailsUseCase = new GetVoteDetailsUseCase(
   voteRepository,
   consultationRepository,
   partyRepository,
-  memberRepository
+  memberRepository,
 );
 
 function VoteListContent() {
   const [mounted, setMounted] = useState(false);
   const [voteSummaries, setVoteSummaries] = useState<VoteSummary[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedConsultation, setSelectedConsultation] = useState<VoteSummary | null>(null);
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [
+    selectedConsultation,
+    setSelectedConsultation,
+  ] = useState<VoteSummary | null>(null);
   const [voteDetails, setVoteDetails] = useState<VoteDetail[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
@@ -51,8 +54,8 @@ function VoteListContent() {
       setVoteSummaries(data);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'Error al cargar votos';
-      logger.error('PAGE: Error al cargar votos', { error: errorMessage });
+        err instanceof Error ? err.message : "Error al cargar votos";
+      logger.error("PAGE: Error al cargar votos", { error: errorMessage });
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -62,14 +65,17 @@ function VoteListContent() {
   const handleViewDetails = async (summary: VoteSummary) => {
     setSelectedConsultation(summary);
     setLoadingDetails(true);
-    
+
     try {
-      const { details } = await getVoteDetailsUseCase.execute(summary.consultationId);
+      const { details } = await getVoteDetailsUseCase.execute(
+        summary.consultationId,
+      );
+      console.log("VOTE DETAILS PAGE:", JSON.stringify(details, null, 2));
       setVoteDetails(details);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'Error al cargar detalles';
-      logger.error('PAGE: Error al cargar detalles', { error: errorMessage });
+        err instanceof Error ? err.message : "Error al cargar detalles";
+      logger.error("PAGE: Error al cargar detalles", { error: errorMessage });
       setError(errorMessage);
     } finally {
       setLoadingDetails(false);
@@ -156,7 +162,7 @@ function VoteListContent() {
             />
             {searchTerm && (
               <button
-                onClick={() => setSearchTerm('')}
+                onClick={() => setSearchTerm("")}
                 className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#b8a896] hover:text-[#3d2f1f]"
               >
                 <svg
@@ -217,9 +223,7 @@ function VoteListContent() {
                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
-                <p className="mt-4 text-[#8b7355]">
-                  No hay votos registrados
-                </p>
+                <p className="mt-4 text-[#8b7355]">No hay votos registrados</p>
               </>
             )}
           </div>
@@ -250,7 +254,7 @@ function VoteListContent() {
                   <tr
                     key={vote.consultationId}
                     className={`border-b border-[#e5ddd0] hover:bg-[#faf8f5] transition-colors ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-[#faf8f5]'
+                      index % 2 === 0 ? "bg-white" : "bg-[#faf8f5]"
                     }`}
                   >
                     <td className="px-4 py-4 text-[#3d2f1f] font-medium">
@@ -364,81 +368,29 @@ function VoteListContent() {
               </div>
             </div>
 
-            {loadingDetails ? (
-              <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3d2f1f]"></div>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-[#f5f1eb] border-b-2 border-[#d4c5b0]">
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[#3d2f1f]">
-                        Miembro
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[#3d2f1f]">
-                        Partido
-                      </th>
-                      <th className="px-4 py-3 text-center text-sm font-medium text-[#3d2f1f]">
-                        Voto
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[#3d2f1f]">
-                        Comentario
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-[#3d2f1f]">
-                        Fecha
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {voteDetails.map((detail, index) => (
-                      <tr
-                        key={detail.id}
-                        className={`border-b border-[#e5ddd0] ${
-                          index % 2 === 0 ? 'bg-white' : 'bg-[#faf8f5]'
-                        }`}
-                      >
-                        <td className="px-4 py-3 text-[#3d2f1f]">
-                          {detail.memberName}
-                        </td>
-                        <td className="px-4 py-3 text-[#3d2f1f]">
-                          {detail.partyAcronym ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-[#8b7355] text-white">
-                              {detail.partyAcronym}
-                            </span>
-                          ) : (
-                            detail.partyName
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <span
-                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                              detail.valueVote
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}
-                          >
-                            {detail.valueVote ? 'A favor' : 'En contra'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-[#3d2f1f] text-sm">
-                          {detail.comment || '-'}
-                        </td>
-                        <td className="px-4 py-3 text-[#8b7355] text-sm">
-                          {new Date(detail.createdAt).toLocaleString('es-CO', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            {selectedConsultation.votesInFavor >
+              selectedConsultation.votesAgainst && (
+              <div className="mb-6 p-4 bg-green-100 border border-green-300 rounded-lg text-center">
+                <p className="text-lg font-bold text-green-800">
+                  ✓ GANÓ LA OPCIÓN "A FAVOR"
+                </p>
               </div>
             )}
+            {selectedConsultation.votesAgainst >
+              selectedConsultation.votesInFavor && (
+              <div className="mb-6 p-4 bg-red-100 border border-red-300 rounded-lg text-center">
+                <p className="text-lg font-bold text-red-800">
+                  ✗ GANÓ LA OPCIÓN "EN CONTRA"
+                </p>
+              </div>
+            )}
+            {selectedConsultation.votesInFavor ===
+              selectedConsultation.votesAgainst &&
+              selectedConsultation.totalVotes > 0 && (
+                <div className="mb-6 p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
+                  <p className="text-lg font-bold text-yellow-800">⚖ EMPATE</p>
+                </div>
+              )}
           </div>
         </div>
       )}

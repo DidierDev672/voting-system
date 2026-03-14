@@ -120,11 +120,11 @@ export class DjangoPartyMemberRepository implements IPartyMemberRepository {
     logger.info('DJANGO_MEMBER_REPO: Obteniendo miembro por ID', { id });
 
     try {
-      const response = await djangoApi.get<DjangoMemberResponse>(
+      const response = await djangoApi.get<{ success: boolean; data: DjangoMemberResponse }>(
         `${this.endpoint}/${id}/`
       );
 
-      return this.mapToEntity(response.data);
+      return this.mapToEntity(response.data.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 404) {
