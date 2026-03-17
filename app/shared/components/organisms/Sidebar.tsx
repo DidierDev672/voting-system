@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Logo } from "../atoms/Logo";
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
   
   const navLinks = [
     { href: "/dashboard", label: "Panel Principal", icon: "📊" },
@@ -22,6 +24,13 @@ export function Sidebar() {
     { href: "/resultados", label: "Resultados", icon: "📈" },
     { href: "/configuracion", label: "Configuracion", icon: "⚙️" },
   ];
+
+  const isActive = (href: string) => {
+    if (href === "/dashboard") {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
+  };
 
   return (
     <>
@@ -63,20 +72,32 @@ export function Sidebar() {
         
         <nav className="mt-8 px-4 flex-1 overflow-y-auto">
           <ul className="space-y-1">
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center px-4 py-3 rounded-sm text-sm font-light tracking-wide text-[#8b7355] hover:bg-[#faf8f5] hover:text-[#3d2f1f] transition-all duration-300 group"
-                >
-                  <span className="mr-3 text-[#b8a896] group-hover:text-[#8b7355] transition-colors">
-                    {link.icon}
-                  </span>
-                  {link.label}
-                </a>
-              </li>
-            ))}
+            {navLinks.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`
+                      flex items-center px-4 py-3 rounded-sm text-sm font-light tracking-wide transition-all duration-300 group
+                      ${active 
+                        ? "bg-[#3d2f1f] text-[#faf8f5]" 
+                        : "text-[#8b7355] hover:bg-[#faf8f5] hover:text-[#3d2f1f]"
+                      }
+                    `}
+                  >
+                    <span className={`
+                      mr-3 transition-colors
+                      ${active ? "text-[#d4a574]" : "text-[#b8a896] group-hover:text-[#8b7355]"}
+                    `}>
+                      {link.icon}
+                    </span>
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
