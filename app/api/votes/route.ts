@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SupabaseVoteRepository } from '@/app/core/infrastructure/repositories';
 import {
-  RegisterVoteUseCase,
+  CreateVoteUseCase,
   GetVotesByConsultationUseCase,
   GetVotesByMemberUseCase,
 } from '@/app/core/application/usecases';
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const useCase = new RegisterVoteUseCase(repository);
+    const useCase = new CreateVoteUseCase(repository);
     const vote = await useCase.execute(body);
 
     return NextResponse.json({ success: true, data: vote }, { status: 201 });

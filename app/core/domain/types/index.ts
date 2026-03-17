@@ -133,3 +133,24 @@ export interface PartyMember extends BaseEntity {
   position: string;
   isActive: boolean;
 }
+
+// ============================================
+// PRESIDENTE DE CONSEJO MUNICIPAL
+// ============================================
+
+export type DocumentType = 'CI' | 'Pasaporte' | 'Licencia' | 'Otro';
+export type PresidencyType = 'Propietario' | 'Suplente' | 'Interino';
+
+export interface MunicipalCouncilPresident extends BaseEntity {
+  fullName: string;
+  documentType: DocumentType;
+  documentId: string;
+  boardPosition: string;
+  politicalParty: string;
+  electionPeriod: string;
+  presidencyType: PresidencyType;
+  positionTime: string;
+  institutionalEmail: string;
+  digitalSignature?: string;
+  fingerprint?: string;
+}

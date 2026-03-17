@@ -36,16 +36,6 @@ export class CreateVoteUseCase {
       throw new Error('El partido político es requerido');
     }
 
-    const hasVoted = await this.voteRepository.existsByMemberAndConsult(
-      vote.memberId,
-      vote.consultationId
-    );
-
-    if (hasVoted) {
-      logger.warning('USECASE: El miembro ya ha votado en esta consulta');
-      throw new Error('Ya has votado en esta consulta');
-    }
-
     try {
       const result = await this.voteRepository.create(vote);
       logger.success('USECASE: CreateVoteUseCase completado', { id: result.id });

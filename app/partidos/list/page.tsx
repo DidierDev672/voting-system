@@ -8,6 +8,7 @@ import {
 } from "@/app/core/application/usecases/party.usecases";
 import { PoliticalParty } from "@/app/core/domain/types/party";
 import { logger } from "@/app/core/infrastructure/logger/logger";
+import { DashboardLayout } from "@/app/shared/components/layouts/DashboardLayout";
 
 const partyRepository = new DjangoPartyRepository();
 const getAllPartiesUseCase = new GetAllPartiesUseCase(partyRepository);
@@ -77,13 +78,16 @@ export default function PartyListPage() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#faf8f5]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3d2f1f]"></div>
-      </div>
+      <DashboardLayout>
+        <div className="min-h-screen flex items-center justify-center bg-[#faf8f5]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3d2f1f]"></div>
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
+    <DashboardLayout>
     <div className="max-w-6xl mx-auto">
       <div className="bg-white rounded-lg shadow-lg p-8 border border-[#d4c5b0]">
         <div className="flex justify-between items-center mb-6">
@@ -424,5 +428,6 @@ export default function PartyListPage() {
         </div>
       )}
     </div>
+    </DashboardLayout>
   );
 }

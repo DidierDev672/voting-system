@@ -6,7 +6,7 @@
  */
 
 import { IConsultationRepository } from '../../domain/ports/consultation-repository.port';
-import { Consultation, CreateConsultationDTO, Question, QuestionType } from '../../domain/types/consultation';
+import { Consultation, CreateConsultationDTO, Question, QuestionType, ConsultationStatus } from '../../domain/types/consultation';
 import { logger } from '../../infrastructure/logger/logger';
 
 export class CreateConsultationUseCase {
@@ -172,6 +172,36 @@ export class DeleteConsultationUseCase {
       logger.success('USECASE: DeleteConsultationUseCase completado', { id });
     } catch (error) {
       logger.error('USECASE: Error en DeleteConsultationUseCase', {
+        error: error instanceof Error ? error.message : error,
+      });
+      throw error;
+    }
+  }
+}
+
+export class UpdateConsultationStatusUseCase {
+  constructor(private readonly consultationRepository: IConsultationRepository) {}
+
+  async execute(id: string, status: ConsultationStatus): Promise<Consultation> {
+    logger.info('USECASE: Iniciando UpdateConsultationStatusUseCase', { id, status });
+
+    if (!id) {
+      logger.warning('USECASE: ID de consulta no proporcionado');
+      throw new Error('El ID de la consulta es requerido');
+    }
+
+    const validStatuses: ConsultationStatus[] = ['draft', 'published', 'closed'];
+    if (!validStatuses.includes(status)) {
+      logger.warning('USECASE: Estado inválido', { status });
+      throw new Error(`Estado inválido: ${status}. Estados válidos: ${validStatuses.join(', ')}`);
+    }
+
+    try {
+      const result = await this.consultationRepository.updateStatus(id, status);
+      logger.success('USECASE: UpdateConsultationStatusUseCase completado', { id, status });
+      return result;
+    } catch (error) {
+      logger.error('USECASE: Error en UpdateConsultationStatusUseCase', {
         error: error instanceof Error ? error.message : error,
       });
       throw error;

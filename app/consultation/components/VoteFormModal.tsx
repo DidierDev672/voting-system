@@ -175,15 +175,6 @@ export function VoteFormModal({
         comment: formData.comment || undefined,
       });
 
-      await createVoteUseCase.execute({
-        consultationId: consultation.id,
-        memberId: memberFound.id,
-        partyId: formData.partyId,
-        authId: authId,
-        valueVote: formData.valueVote,
-        comment: formData.comment || undefined,
-      });
-
       logger.success("MODAL: Voto registrado exitosamente");
       setSuccess("Voto registrado exitosamente");
 

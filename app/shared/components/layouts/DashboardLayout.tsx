@@ -10,8 +10,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="flex min-h-screen bg-[#fafaf5]">
       <Sidebar />
-      <div className="flex flex-col flex-1">
-        <main className="flex-1 p-6">{children}</main>
+      <div className="flex flex-col flex-1 min-w-0">
+        <main className="flex-1 p-4 md:p-6 md:pt-6 pt-16">
+          {children}
+        </main>
         <Footer />
       </div>
     </div>

@@ -5,7 +5,7 @@
  * - Dependency Inversion: depende de abstracciones
  */
 
-import { Consultation, CreateConsultationDTO } from '../../domain/types/consultation';
+import { Consultation, CreateConsultationDTO, ConsultationStatus } from '../../domain/types/consultation';
 
 export interface IConsultationRepository {
   create(consultation: CreateConsultationDTO): Promise<Consultation>;
@@ -15,4 +15,5 @@ export interface IConsultationRepository {
   publish(id: string): Promise<Consultation>;
   close(id: string): Promise<Consultation>;
   delete(id: string): Promise<void>;
+  updateStatus(id: string, status: ConsultationStatus): Promise<Consultation>;
 }

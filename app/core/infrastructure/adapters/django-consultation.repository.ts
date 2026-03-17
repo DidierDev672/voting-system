@@ -231,6 +231,41 @@ export class DjangoConsultationRepository implements IConsultationRepository {
     }
   }
 
+  async updateStatus(id: string, status: Consultation['status']): Promise<Consultation> {
+    logger.info('DJANGO_CONSULTATION_REPO: Actualizando estado de consulta', { id, status });
+
+    try {
+      const response = await djangoApi.patch<{
+        id: string;
+        title: string;
+        status: string;
+        message?: string;
+        error?: string;
+      }>(`${this.endpoint}/${id}/status/`, { status });
+
+      if (response.data.error) {
+        logger.error('DJANGO_CONSULTATION_REPO: Error de la API', { error: response.data.error });
+        throw new Error(response.data.error);
+      }
+
+      const consultation = await this.getById(id);
+      if (!consultation) {
+        throw new Error('Error al obtener la consulta actualizada');
+      }
+
+      logger.success('DJANGO_CONSULTATION_REPO: Estado actualizado', { id, status });
+      return consultation;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.error || error.response?.data?.message || error.message;
+        logger.error('DJANGO_CONSULTATION_REPO: Error de Axios', { message });
+        throw new Error(message);
+      }
+      logger.error('DJANGO_CONSULTATION_REPO: Error desconocido', { error });
+      throw error;
+    }
+  }
+
   private mapToEntity(data: DjangoConsultationResponse): Consultation {
     return {
       id: data.id,

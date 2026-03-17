@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/core/presentation/hooks/use-auth';
 import { DashboardLayout } from '@/app/shared/components/layouts/DashboardLayout';
+import { WelcomeBanner } from '@/app/shared/components/organisms/WelcomeBanner';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -32,11 +33,10 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-light text-[#3d2f1f]">
-            Panel Principal
-          </h1>
+      <div className="max-w-7xl mx-auto space-y-8">
+        <WelcomeBanner userName={user?.fullName} />
+
+        <div className="flex justify-end">
           <button
             onClick={logout}
             className="px-4 py-2 bg-[#8b7355] hover:bg-[#6b5744] text-white rounded-md text-sm transition-colors"
@@ -44,10 +44,6 @@ export default function Dashboard() {
             Cerrar Sesión
           </button>
         </div>
-
-        <p className="text-[#8b7355] mb-4">
-          Bienvenido{user?.fullName ? `, ${user.fullName}` : ''}
-        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-sm border border-[#e5ddd0]">

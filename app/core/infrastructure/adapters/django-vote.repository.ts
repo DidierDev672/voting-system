@@ -24,6 +24,7 @@ interface DjangoVoteResponse {
 }
 
 interface CreateVoteApiResponse {
+  success: boolean;
   message?: string;
   data?: DjangoVoteResponse;
   error?: string;
@@ -58,9 +59,10 @@ export class DjangoVoteRepository implements IVoteRepository {
 
       console.log("=== VOTE RESPONSE ===", response.data);
 
-      if (response.data.error) {
-        logger.error('DJANGO_VOTE_REPO: Error de la API', { error: response.data.error });
-        throw new Error(response.data.error);
+      if (!response.data.success) {
+        const errorMsg = response.data.error || response.data.message || 'Error al crear el voto';
+        logger.error('DJANGO_VOTE_REPO: Error de la API', { error: errorMsg });
+        throw new Error(errorMsg);
       }
 
       if (!response.data.data) {

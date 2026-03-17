@@ -13,6 +13,7 @@ import {
   CreateConsultationDTO,
   UpdateConsultationDTO,
   Question,
+  ConsultationStatus,
 } from '../../domain/types';
 
 export class SupabaseConsultationRepository implements IConsultationRepository {
@@ -107,5 +108,34 @@ export class SupabaseConsultationRepository implements IConsultationRepository {
     const { error } = await supabase.from(this.table).delete().eq('id', id);
 
     return !error;
+  }
+
+  async updateStatus(id: string, status: ConsultationStatus): Promise<PopularConsultation> {
+    const { data: result, error } = await supabase
+      .from(this.table)
+      .update({ status })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return this.mapToEntity(result);
+  }
+
+  // Alias methods to match IConsultationRepository interface
+  async getAll(): Promise<PopularConsultation[]> {
+    return this.findAll();
+  }
+
+  async getById(id: string): Promise<PopularConsultation | null> {
+    return this.findById(id);
+  }
+
+  async publish(id: string): Promise<PopularConsultation> {
+    return this.updateStatus(id, 'published');
+  }
+
+  async close(id: string): Promise<PopularConsultation> {
+    return this.updateStatus(id, 'closed');
   }
 }
