@@ -20,7 +20,7 @@ const repository = new SupabaseConsultationRepository();
 // GET /api/consultations - Obtener todas las consultas
 export async function GET(request: NextRequest) {
   try {
-    const useCase = new GetAllConsultationUseCase(repository);
+    const useCase = new GetAllConsultationsUseCase(repository);
     const consultations = await useCase.execute();
 
     return NextResponse.json({

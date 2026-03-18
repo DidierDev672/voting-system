@@ -68,7 +68,7 @@ function VoteListContent() {
 
     try {
       const { details } = await getVoteDetailsUseCase.execute(
-        summary.consultationId,
+        summary.idConsult,
       );
       console.log("VOTE DETAILS PAGE:", JSON.stringify(details, null, 2));
       setVoteDetails(details);
@@ -252,7 +252,7 @@ function VoteListContent() {
               <tbody>
                 {filteredVotes.map((vote, index) => (
                   <tr
-                    key={vote.consultationId}
+                    key={vote.idConsult}
                     className={`border-b border-[#e5ddd0] hover:bg-[#faf8f5] transition-colors ${
                       index % 2 === 0 ? "bg-white" : "bg-[#faf8f5]"
                     }`}

@@ -54,7 +54,7 @@ export interface UpdateUserDTO {
 export type ConsultationStatus = 'draft' | 'published' | 'closed';
 
 export interface Question {
-  id: string;
+  id?: string;
   text: string;
   questionType: QuestionType;
   options?: string[];
@@ -76,11 +76,13 @@ export interface CreateConsultationDTO {
   description: string;
   questions: Question[];
   proprietaryRepresentation: string;
+  status?: ConsultationStatus;
 }
 
 export interface UpdateConsultationDTO {
   title?: string;
-  description?: questions?: Question[];
+  description?: string;
+  questions?: Question[];
   proprietaryRepresentation?: string;
   status?: ConsultationStatus;
 }

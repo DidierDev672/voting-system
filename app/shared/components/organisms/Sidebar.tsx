@@ -21,6 +21,8 @@ export function Sidebar() {
     { href: "/secretary", label: "Secretario Consejo", icon: "📜" },
     { href: "/session", label: "Crear Sesion", icon: "📅" },
     { href: "/session-calendar", label: "Calendario Sesiones", icon: "📆" },
+    { href: "/bancadas", label: "Crear Bancada", icon: "🏛️" },
+    { href: "/bancadas/list", label: "Lista Bancadas", icon: "📋" },
     { href: "/resultados", label: "Resultados", icon: "📈" },
     { href: "/configuracion", label: "Configuracion", icon: "⚙️" },
   ];

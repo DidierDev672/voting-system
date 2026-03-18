@@ -145,8 +145,8 @@ export function VoteFormModal({
       const session = localStorage.getItem("auth_session");
       const accessToken = session ? JSON.parse(session).accessToken : null;
       const authId = accessToken
-        ? extractSupabaseUserId(accessToken)
-        : "anonymous";
+        ? extractSupabaseUserId(accessToken) || undefined
+        : undefined;
 
       console.log("=== DEBUG SUBMIT ===");
       console.log("memberFound:", memberFound);
@@ -167,10 +167,10 @@ export function VoteFormModal({
       });
 
       await createVoteUseCase.execute({
-        consultationId: consultation.id,
-        memberId: memberFound.id,
-        partyId: formData.partyId,
-        authId: authId,
+        idConsult: consultation.id,
+        idMember: memberFound.id,
+        idParty: formData.partyId,
+        idAuth: authId,
         valueVote: formData.valueVote,
         comment: formData.comment || undefined,
       });
@@ -284,7 +284,7 @@ export function VoteFormModal({
             )}
             {memberFound && (
               <p className="mt-2 text-sm text-green-600 bg-green-50 p-2 rounded">
-                Miembro verificado: {memberFound.name} {memberFound.lastName}
+                Miembro verificado: {memberFound.fullName}
               </p>
             )}
           </div>

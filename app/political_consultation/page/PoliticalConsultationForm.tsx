@@ -8,7 +8,7 @@ export default function PoliticalConsultationForm() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: Record<string, unknown>) => {
     console.log('Datos de consulta:', data);
   };
 
@@ -114,7 +114,7 @@ export default function PoliticalConsultationForm() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  {errors.title.message}
+                  {errors.title?.message && String(errors.title.message)}
                 </p>
               )}
             </div>
@@ -129,7 +129,7 @@ export default function PoliticalConsultationForm() {
                   required: 'La pregunta es obligatoria',
                 })}
                 className="w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3 text-[#3d2f1f] placeholder-[#b8a896] font-light focus:outline-none focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355] focus:ring-opacity-20 transition-all resize-none"
-                rows="3"
+                rows={3}
                 placeholder="¿Está usted de acuerdo con...? (Formula la pregunta que será sometida a votación)"
               />
               {errors.question && (
@@ -145,7 +145,7 @@ export default function PoliticalConsultationForm() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  {errors.question.message}
+                  {errors.question?.message && String(errors.question.message)}
                 </p>
               )}
             </div>
@@ -160,7 +160,7 @@ export default function PoliticalConsultationForm() {
                   required: 'La descripción es obligatoria',
                 })}
                 className="w-full bg-[#faf8f5] border border-[#e5ddd0] rounded-sm px-4 py-3 text-[#3d2f1f] placeholder-[#b8a896] font-light focus:outline-none focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355] focus:ring-opacity-20 transition-all resize-none"
-                rows="4"
+                rows={4}
                 placeholder="Explique los motivos, antecedentes y alcance de la consulta popular"
               />
               {errors.description && (
@@ -176,7 +176,7 @@ export default function PoliticalConsultationForm() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  {errors.description.message}
+                  {errors.description?.message && String(errors.description.message)}
                 </p>
               )}
             </div>
@@ -243,7 +243,7 @@ export default function PoliticalConsultationForm() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  {errors.territorialScope.message}
+                  {errors.territorialScope?.message && String(errors.territorialScope.message)}
                 </p>
               )}
             </div>
@@ -274,7 +274,7 @@ export default function PoliticalConsultationForm() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  {errors.organizer.message}
+                  {errors.organizer?.message && String(errors.organizer.message)}
                 </p>
               )}
             </div>
@@ -302,7 +302,7 @@ export default function PoliticalConsultationForm() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  {errors.date.message}
+                  {errors.date?.message && String(errors.date.message)}
                 </p>
               )}
             </div>

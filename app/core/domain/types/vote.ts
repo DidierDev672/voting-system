@@ -5,21 +5,21 @@
 
 export interface Vote {
   id: string;
-  consultationId: string;
-  memberId: string;
-  memberDocumentNumber?: string;
-  partyId: string;
-  authId: string;
+  idConsult: string;
+  idMember: string;
+  idParty: string;
+  idAuth: string;
   valueVote: boolean;
   comment?: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateVoteDTO {
-  consultationId: string;
-  memberId: string;
-  partyId: string;
-  authId?: string;
+  idConsult: string;
+  idMember: string;
+  idParty: string;
+  idAuth?: string;
   valueVote: boolean;
   comment?: string;
 }
@@ -31,7 +31,7 @@ export interface VoteResponse {
 }
 
 export interface VoteSummary {
-  consultationId: string;
+  idConsult: string;
   consultationTitle: string;
   totalVotes: number;
   votesInFavor: number;

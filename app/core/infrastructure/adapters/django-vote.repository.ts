@@ -35,16 +35,16 @@ export class DjangoVoteRepository implements IVoteRepository {
 
   async create(vote: CreateVoteDTO): Promise<Vote> {
     logger.info('DJANGO_VOTE_REPO: Creando voto', { 
-      consultationId: vote.consultationId,
-      memberId: vote.memberId,
-      partyId: vote.partyId
+      idConsult: vote.idConsult,
+      idMember: vote.idMember,
+      idParty: vote.idParty
     });
 
     const voteData = {
-      id_consult: vote.consultationId,
-      id_member: vote.memberId,
-      id_party: vote.partyId,
-      id_auth: vote.authId || 'anonymous',
+      id_consult: vote.idConsult,
+      id_member: vote.idMember,
+      id_party: vote.idParty,
+      id_auth: vote.idAuth || 'anonymous',
       value_vote: vote.valueVote,
       comment: vote.comment || null,
     };
@@ -177,13 +177,14 @@ export class DjangoVoteRepository implements IVoteRepository {
   private mapToEntity(data: DjangoVoteResponse): Vote {
     return {
       id: data.id,
-      consultationId: data.id_consult,
-      memberId: data.id_number,
-      partyId: data.id_party,
-      authId: data.id_auth,
+      idConsult: data.id_consult,
+      idMember: data.id_number,
+      idParty: data.id_party,
+      idAuth: data.id_auth,
       valueVote: data.value_vote,
       comment: data.comment || undefined,
       createdAt: data.created_at,
+      updatedAt: data.created_at,
     };
   }
 }

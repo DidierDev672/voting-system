@@ -53,7 +53,7 @@ export class SupabaseAuthAdapter implements IAuthPort {
       session: {
         accessToken: data.session.access_token,
         refreshToken: data.session.refresh_token,
-        expiresAt: data.session.expires_at,
+        expiresAt: data.session.expires_at ?? 0,
         user: {
           id: data.user.id,
           email: data.user.email || '',
@@ -113,7 +113,7 @@ export class SupabaseAuthAdapter implements IAuthPort {
     return {
       accessToken: data.session.access_token,
       refreshToken: data.session.refresh_token,
-      expiresAt: data.session.expires_at,
+      expiresAt: data.session.expires_at ?? 0,
       user: {
         id: data.user.id,
         email: data.user.email || '',

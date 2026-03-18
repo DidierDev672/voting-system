@@ -97,4 +97,22 @@ export class SupabaseVoteRepository implements IVoteRepository {
 
     return !error;
   }
+
+  async getAll(): Promise<Vote[]> {
+    const { data, error } = await supabase
+      .from(this.table)
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw new Error(error.message);
+    return (data || []).map(this.mapToEntity);
+  }
+
+  async getByConsultation(consultationId: string): Promise<Vote[]> {
+    return this.findByConsultation(consultationId);
+  }
+
+  async getByMember(documentNumber: string): Promise<Vote[]> {
+    return this.findByMember(documentNumber);
+  }
 }

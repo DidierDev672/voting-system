@@ -19,19 +19,19 @@ export class CreateVoteUseCase {
   constructor(private readonly voteRepository: IVoteRepository) {}
 
   async execute(vote: CreateVoteDTO): Promise<Vote> {
-    logger.info('USECASE: Iniciando CreateVoteUseCase', { consultationId: vote.consultationId });
+    logger.info('USECASE: Iniciando CreateVoteUseCase', { idConsult: vote.idConsult });
 
-    if (!vote.consultationId) {
+    if (!vote.idConsult) {
       logger.warning('USECASE: ID de consulta no proporcionado');
       throw new Error('El ID de la consulta es requerido');
     }
 
-    if (!vote.memberId || vote.memberId.trim().length === 0) {
+    if (!vote.idMember || vote.idMember.trim().length === 0) {
       logger.warning('USECASE: ID de miembro no proporcionado');
       throw new Error('El ID del miembro es requerido');
     }
 
-    if (!vote.partyId) {
+    if (!vote.idParty) {
       logger.warning('USECASE: Partido político no seleccionado');
       throw new Error('El partido político es requerido');
     }
@@ -116,8 +116,8 @@ export class GetAllVotesUseCase {
       const summaryMap = new Map<string, VoteSummary>();
 
       votes.forEach(vote => {
-        const existing = summaryMap.get(vote.consultationId);
-        const consultation = consultationMap.get(vote.consultationId);
+        const existing = summaryMap.get(vote.idConsult);
+        const consultation = consultationMap.get(vote.idConsult);
 
         if (existing) {
           existing.totalVotes++;
@@ -127,8 +127,8 @@ export class GetAllVotesUseCase {
             existing.votesAgainst++;
           }
         } else {
-          summaryMap.set(vote.consultationId, {
-            consultationId: vote.consultationId,
+          summaryMap.set(vote.idConsult, {
+            idConsult: vote.idConsult,
             consultationTitle: consultation?.title || 'Sin título',
             totalVotes: 1,
             votesInFavor: vote.valueVote ? 1 : 0,
@@ -181,7 +181,7 @@ export class GetVoteDetailsUseCase {
       console.log('Member map keys:', Array.from(memberMap.keys()).slice(0, 5));
 
       const summary: VoteSummary = {
-        consultationId,
+        idConsult: consultationId,
         consultationTitle: consultation?.title || 'Sin título',
         totalVotes: votes.length,
         votesInFavor: votes.filter(v => v.valueVote).length,
@@ -201,12 +201,12 @@ export class GetVoteDetailsUseCase {
       }
 
       const details: VoteDetail[] = votes.map(vote => {
-        const member = memberMap.get(vote.memberId);
+        const member = memberMap.get(vote.idMember);
         const party = member ? partyMap.get(member.politicalPartyId) : undefined;
 
-        console.log('Processing vote:', vote.id, 'memberId:', vote.memberId, 'found:', !!member, 'partyId:', member?.politicalPartyId);
+        console.log('Processing vote:', vote.id, 'idMember:', vote.idMember, 'found:', !!member, 'partyId:', member?.politicalPartyId);
 
-        const memberIdStr = vote.memberId || '';
+        const memberIdStr = vote.idMember || '';
         const partyIdStr = member?.politicalPartyId || '';
 
         return {

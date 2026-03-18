@@ -104,10 +104,8 @@ export class SupabaseConsultationRepository implements IConsultationRepository {
     return this.mapToEntity(result);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const { error } = await supabase.from(this.table).delete().eq('id', id);
-
-    return !error;
+  async delete(id: string): Promise<void> {
+    await supabase.from(this.table).delete().eq('id', id);
   }
 
   async updateStatus(id: string, status: ConsultationStatus): Promise<PopularConsultation> {
