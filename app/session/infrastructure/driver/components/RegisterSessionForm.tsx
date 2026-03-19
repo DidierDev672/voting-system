@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { DjangoMunicipalCouncilSessionRepository } from "@/app/core/infrastructure/adapters/django-municipal-council-session.repository";
 import { DjangoMunicipalCouncilPresidentRepository } from "@/app/core/infrastructure/adapters/django-municipal-council-president.repository";
 import { DjangoMunicipalCouncilSecretaryRepository } from "@/app/core/infrastructure/adapters/django-municipal-council-secretary.repository";
@@ -25,12 +26,28 @@ interface SecretaryOption {
   fullName: string;
 }
 
+interface AvailableMember {
+  id: string;
+  fullName: string;
+  documentNumber: string;
+}
+
+interface AvailableBancada {
+  id: string;
+  tipoCurul: string;
+  profesion: string;
+}
+
 export default function RegisterSessionForm() {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [presidents, setPresidents] = useState<PresidentOption[]>([]);
   const [secretaries, setSecretaries] = useState<SecretaryOption[]>([]);
+  const [allMembers, setAllMembers] = useState<AvailableMember[]>([]);
+  const [allBancadas, setAllBancadas] = useState<AvailableBancada[]>([]);
   const [loadingPresidents, setLoadingPresidents] = useState(true);
   const [loadingSecretaries, setLoadingSecretaries] = useState(true);
+  const [loadingData, setLoadingData] = useState(true);
   const [formData, setFormData] = useState({
     titleSession: "",
     typeSession: "" as TypeSession | "",
@@ -44,6 +61,10 @@ export default function RegisterSessionForm() {
     idPresident: "",
     idSecretary: "",
   });
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [selectedBancadas, setSelectedBancadas] = useState<string[]>([]);
+  const [showMembersModal, setShowMembersModal] = useState(false);
+  const [showBancadasModal, setShowBancadasModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,6 +73,7 @@ export default function RegisterSessionForm() {
     setMounted(true);
     loadPresidents();
     loadSecretaries();
+    loadAllMembersAndBancadas();
     
     const params = new URLSearchParams(window.location.search);
     const dateParam = params.get('date');
@@ -92,6 +114,24 @@ export default function RegisterSessionForm() {
     }
   };
 
+  const loadAllMembersAndBancadas = async () => {
+    try {
+      setLoadingData(true);
+      const [members, bancadas] = await Promise.all([
+        sessionRepository.getAllMembers(),
+        sessionRepository.getAllBancadas()
+      ]);
+      setAllMembers(members);
+      setAllBancadas(bancadas);
+    } catch (err) {
+      logger.error("FORM: Error al cargar miembros y bancadas", {
+        error: err instanceof Error ? err.message : err,
+      });
+    } finally {
+      setLoadingData(false);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
@@ -119,8 +159,47 @@ export default function RegisterSessionForm() {
 
       logger.success("FORM: Sesion registrada exitosamente", {
         id: result.id,
+        titleSession: result.titleSession,
       });
-      setSuccess(`Sesion "${result.titleSession}" registrada exitosamente`);
+
+      console.log("=== DEBUG: result.id ===", result.id);
+      console.log("=== DEBUG: selectedMembers ===", selectedMembers);
+      console.log("=== DEBUG: selectedBancadas ===", selectedBancadas);
+
+      let failedMembers = 0;
+      let failedBancadas = 0;
+
+      for (const memberId of selectedMembers) {
+        console.log(`=== DEBUG: Adding member ${memberId} to session ${result.id} ===`);
+        try {
+          await sessionRepository.addMember(result.id!, memberId);
+          console.log(`=== DEBUG: Member ${memberId} added successfully ===`);
+          logger.success("FORM: Miembro agregado", { memberId });
+        } catch (err) {
+          failedMembers++;
+          console.error(`=== DEBUG: Error adding member ${memberId}:`, err);
+          logger.error("FORM: Error al agregar miembro", { memberId, error: err instanceof Error ? err.message : err });
+        }
+      }
+
+      for (const bancadaId of selectedBancadas) {
+        console.log(`=== DEBUG: Adding bancada ${bancadaId} to session ${result.id} ===`);
+        try {
+          await sessionRepository.addBancada(result.id!, bancadaId);
+          console.log(`=== DEBUG: Bancada ${bancadaId} added successfully ===`);
+          logger.success("FORM: Bancada agregada", { bancadaId });
+        } catch (err) {
+          failedBancadas++;
+          console.error(`=== DEBUG: Error adding bancada ${bancadaId}:`, err);
+          logger.error("FORM: Error al agregar bancada", { bancadaId, error: err instanceof Error ? err.message : err });
+        }
+      }
+
+      if (failedMembers > 0 || failedBancadas > 0) {
+        setSuccess(`Sesion "${result.titleSession}" registrada exitosamente. Miembros agregados: ${selectedMembers.length - failedMembers}/${selectedMembers.length}, Bancadas agregadas: ${selectedBancadas.length - failedBancadas}/${selectedBancadas.length}`);
+      } else {
+        setSuccess(`Sesion "${result.titleSession}" registrada exitosamente con ${selectedMembers.length} miembros y ${selectedBancadas.length} bancadas`);
+      }
 
       setFormData({
         titleSession: "",
@@ -135,6 +214,12 @@ export default function RegisterSessionForm() {
         idPresident: "",
         idSecretary: "",
       });
+      setSelectedMembers([]);
+      setSelectedBancadas([]);
+
+      setTimeout(() => {
+        router.push("/session/list");
+      }, 2000);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Error al registrar sesion";
@@ -147,6 +232,32 @@ export default function RegisterSessionForm() {
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const toggleMember = (memberId: string) => {
+    setSelectedMembers(prev => 
+      prev.includes(memberId) 
+        ? prev.filter(id => id !== memberId)
+        : [...prev, memberId]
+    );
+  };
+
+  const toggleBancada = (bancadaId: string) => {
+    setSelectedBancadas(prev => 
+      prev.includes(bancadaId) 
+        ? prev.filter(id => id !== bancadaId)
+        : [...prev, bancadaId]
+    );
+  };
+
+  const getMemberName = (memberId: string) => {
+    const member = allMembers.find(m => m.id === memberId);
+    return member ? `${member.fullName} (${member.documentNumber})` : memberId;
+  };
+
+  const getBancadaName = (bancadaId: string) => {
+    const bancada = allBancadas.find(b => b.id === bancadaId);
+    return bancada ? `${bancada.profesion} - ${bancada.tipoCurul}` : bancadaId;
   };
 
   if (!mounted) {
@@ -373,6 +484,90 @@ export default function RegisterSessionForm() {
             </div>
           </div>
 
+          <div className="border-t-2 border-[#e5ddd0] pt-6">
+            <h3 className="text-lg font-medium text-[#3d2f1f] mb-4">Miembros y Bancadas</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-[#faf8f5] p-4 rounded-lg border border-[#e5ddd0]">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-sm font-medium text-[#3d2f1f]">
+                    Miembros ({selectedMembers.length})
+                  </label>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await loadAllMembersAndBancadas();
+                      setShowMembersModal(true);
+                    }}
+                    className="px-3 py-1 text-xs bg-[#3d2f1f] text-white rounded hover:bg-[#5a4332] transition-colors"
+                  >
+                    + Seleccionar
+                  </button>
+                </div>
+                
+                {selectedMembers.length === 0 ? (
+                  <p className="text-sm text-[#8b7355] italic">No hay miembros seleccionados</p>
+                ) : (
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {selectedMembers.map((memberId) => (
+                      <div key={memberId} className="flex justify-between items-center p-2 bg-white rounded border border-[#d4c5b0]">
+                        <span className="text-sm text-[#3d2f1f] truncate flex-1">{getMemberName(memberId)}</span>
+                        <button
+                          type="button"
+                          onClick={() => toggleMember(memberId)}
+                          className="ml-2 text-red-500 hover:bg-red-50 p-1 rounded"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-[#faf8f5] p-4 rounded-lg border border-[#e5ddd0]">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-sm font-medium text-[#3d2f1f]">
+                    Bancadas ({selectedBancadas.length})
+                  </label>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await loadAllMembersAndBancadas();
+                      setShowBancadasModal(true);
+                    }}
+                    className="px-3 py-1 text-xs bg-[#3d2f1f] text-white rounded hover:bg-[#5a4332] transition-colors"
+                  >
+                    + Seleccionar
+                  </button>
+                </div>
+                
+                {selectedBancadas.length === 0 ? (
+                  <p className="text-sm text-[#8b7355] italic">No hay bancadas seleccionadas</p>
+                ) : (
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {selectedBancadas.map((bancadaId) => (
+                      <div key={bancadaId} className="flex justify-between items-center p-2 bg-white rounded border border-[#d4c5b0]">
+                        <span className="text-sm text-[#3d2f1f] truncate flex-1">{getBancadaName(bancadaId)}</span>
+                        <button
+                          type="button"
+                          onClick={() => toggleBancada(bancadaId)}
+                          className="ml-2 text-red-500 hover:bg-red-50 p-1 rounded"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="pt-4">
             <button
               type="submit"
@@ -381,42 +576,17 @@ export default function RegisterSessionForm() {
             >
               {loading ? (
                 <span className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
                   Registrando...
                 </span>
               ) : (
                 <span className="flex items-center justify-center">
                   Registrar Sesion
-                  <svg
-                    className="w-5 h-5 ml-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
+                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </span>
               )}
@@ -424,6 +594,114 @@ export default function RegisterSessionForm() {
           </div>
         </form>
       </div>
+
+      {showMembersModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] flex flex-col">
+            <div className="p-6 border-b border-[#e5ddd0]">
+              <h3 className="text-lg font-medium text-[#3d2f1f]">Seleccionar Miembros</h3>
+              <p className="text-sm text-[#8b7355]">Marque los miembros que desea agregar a la sesion</p>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1">
+              {loadingData ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3d2f1f]"></div>
+                </div>
+              ) : allMembers.length === 0 ? (
+                <p className="text-center text-[#8b7355] py-4">No hay miembros disponibles</p>
+              ) : (
+                <div className="space-y-2">
+                  {allMembers.map((member) => (
+                    <label
+                      key={member.id}
+                      className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
+                        selectedMembers.includes(member.id)
+                          ? 'bg-[#e6f5e6] border border-green-300'
+                          : 'bg-[#faf8f5] border border-[#e5ddd0] hover:bg-[#f5f1eb]'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedMembers.includes(member.id)}
+                        onChange={() => toggleMember(member.id)}
+                        className="w-4 h-4 text-[#3d2f1f] rounded border-[#d4c5b0] focus:ring-[#8b7355]"
+                      />
+                      <div className="ml-3">
+                        <p className="font-medium text-[#3d2f1f]">{member.fullName}</p>
+                        <p className="text-sm text-[#8b7355]">{member.documentNumber}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 border-t border-[#e5ddd0]">
+              <button
+                onClick={() => setShowMembersModal(false)}
+                className="w-full py-3 bg-[#3d2f1f] text-white rounded-lg hover:bg-[#5a4332] transition-colors"
+              >
+                Aceptar ({selectedMembers.length} seleccionados)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showBancadasModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] flex flex-col">
+            <div className="p-6 border-b border-[#e5ddd0]">
+              <h3 className="text-lg font-medium text-[#3d2f1f]">Seleccionar Bancadas</h3>
+              <p className="text-sm text-[#8b7355]">Marque las bancadas que desea agregar a la sesion</p>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1">
+              {loadingData ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3d2f1f]"></div>
+                </div>
+              ) : allBancadas.length === 0 ? (
+                <p className="text-center text-[#8b7355] py-4">No hay bancadas disponibles</p>
+              ) : (
+                <div className="space-y-2">
+                  {allBancadas.map((bancada) => (
+                    <label
+                      key={bancada.id}
+                      className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
+                        selectedBancadas.includes(bancada.id)
+                          ? 'bg-[#e6f5e6] border border-green-300'
+                          : 'bg-[#faf8f5] border border-[#e5ddd0] hover:bg-[#f5f1eb]'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedBancadas.includes(bancada.id)}
+                        onChange={() => toggleBancada(bancada.id)}
+                        className="w-4 h-4 text-[#3d2f1f] rounded border-[#d4c5b0] focus:ring-[#8b7355]"
+                      />
+                      <div className="ml-3">
+                        <p className="font-medium text-[#3d2f1f]">{bancada.profesion}</p>
+                        <p className="text-sm text-[#8b7355]">{bancada.tipoCurul}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 border-t border-[#e5ddd0]">
+              <button
+                onClick={() => setShowBancadasModal(false)}
+                className="w-full py-3 bg-[#3d2f1f] text-white rounded-lg hover:bg-[#5a4332] transition-colors"
+              >
+                Aceptar ({selectedBancadas.length} seleccionadas)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -20,6 +20,7 @@ export function Sidebar() {
     { href: "/president", label: "Presidente Consejo", icon: "🏅" },
     { href: "/secretary", label: "Secretario Consejo", icon: "📜" },
     { href: "/session", label: "Crear Sesion", icon: "📅" },
+    { href: "/session/list", label: "Lista Sesiones", icon: "📋" },
     { href: "/session-calendar", label: "Calendario Sesiones", icon: "📆" },
     { href: "/bancadas", label: "Crear Bancada", icon: "🏛️" },
     { href: "/bancadas/list", label: "Lista Bancadas", icon: "📋" },

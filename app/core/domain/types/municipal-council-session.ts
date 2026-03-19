@@ -7,6 +7,24 @@ export type TypeSession = 'Ordinaria' | 'Extraordinaria' | 'Especial' | 'Instala
 export type StatusSession = 'Convocada' | 'En progreso' | 'Realizada' | 'Cancelada' | 'Postergada';
 export type Modality = 'presencial' | 'virtual' | 'hibrida';
 
+export interface SessionMember {
+  id: string;
+  idMember: string;
+  memberName: string;
+  memberDocument: string;
+  memberEmail: string;
+  isPresent: boolean;
+  arrivalTime?: string;
+}
+
+export interface SessionBancada {
+  id: string;
+  idBancada: string;
+  bancadaTipoCurul: string;
+  bancadaProfesion: string;
+  bancadaCorreo: string;
+}
+
 export interface MunicipalCouncilSession {
   id: string;
   titleSession: string;
@@ -20,6 +38,8 @@ export interface MunicipalCouncilSession {
   quorumRequired: number;
   idPresident: string;
   idSecretary: string;
+  members: SessionMember[];
+  bancadas: SessionBancada[];
   createdAt?: string;
   updatedAt?: string;
 }

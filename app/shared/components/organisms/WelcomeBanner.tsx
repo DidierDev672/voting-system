@@ -42,16 +42,16 @@ export function WelcomeBanner({ userName }: WelcomeBannerProps) {
           {currentDate}
         </p>
 
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-light text-[#faf8f5] mb-4">
-          {greeting}{" "}
+        <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-light mb-4">
+          <span className="text-white">{greeting} </span>
           <span className="font-medium text-[#d4a574]">
             {userName || "Usuario"}
           </span>
         </h1>
 
         <p className="text-[#b8a896] text-base md:text-lg max-w-xl leading-relaxed">
-          Es un placer tenerte de vuelta. Aquí encontrarás todo lo necesario para
-          gestionar el sistema de votación municipal.
+          Es un placer tenerte de vuelta. Aquí encontrarás todo lo necesario
+          para gestionar el sistema de votación municipal.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3">
