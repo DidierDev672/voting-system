@@ -22,6 +22,7 @@ export function Sidebar() {
     { href: "/session", label: "Crear Sesion", icon: "📅" },
     { href: "/session/list", label: "Lista Sesiones", icon: "📋" },
     { href: "/session-calendar", label: "Calendario Sesiones", icon: "📆" },
+    { href: "/actas/list", label: "Actas Sesiones", icon: "📄" },
     { href: "/alcaldia", label: "Crear Alcaldía", icon: "🏢" },
     { href: "/alcaldia/list", label: "Lista Alcaldías", icon: "📋" },
     { href: "/bancadas", label: "Crear Bancada", icon: "🏛️" },
